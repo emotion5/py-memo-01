@@ -1,149 +1,55 @@
-# FastAPI & SQLModel 서버 구성 계획서
+# FastAPI-Firestore 메모 앱
 
-본 문서는 FastAPI와 SQLModel을 사용하여 프론트엔드에 데이터 API를 제공하는 백엔드 서버의 구성 계획을 정의합니다. 서버와 데이터베이스는 Render.com 클라우드 서비스를 사용하여 배포 및 운영됩니다.
+A simple memo application built with FastAPI and Vanilla JS, using Google Firestore as the database, and deployed on Vercel.
 
-## 1. 핵심 목표
+## ✨ 주요 기능
 
-- 프론트엔드 애플리케이션에서 데이터를 기록하고 조회할 수 있는 안정적인 API 서버를 구축합니다.
-- Python의 타입 힌트를 적극적으로 활용하여 데이터 유효성을 검증하고 코드 안정성을 높입니다.
-- SQL 쿼리문 없이 Python 코드로 데이터베이스 작업을 처리(CRUD)합니다.
-- Render.com의 관리형 서비스를 통해 인프라 관리 부담을 최소화하고 빠르게 배포합니다.
+- **메모 작성**: 새로운 메모를 작성하고 저장합니다.
+- **메모 조회**: 저장된 모든 메모를 최신순으로 불러옵니다.
+- **메모 삭제**: 각 메모를 개별적으로 삭제합니다.
+- **영구 저장**: 데이터는 Google Firestore에 안전하게 저장됩니다.
 
-## 2. 기술 스택 및 역할
+## 🛠️ 기술 스택
 
-| 기술            | 역할                                                                                             |
-| --------------- | ------------------------------------------------------------------------------------------------ |
-| **FastAPI**     | API 서버 구축, URL 라우팅, 데이터 검증, 자동 API 문서 생성                                       |
-| **SQLModel**    | 데이터베이스 테이블 구조 모델링 및 ORM(Object-Relational Mapping) 기능 제공                      |
-| **Uvicorn**     | FastAPI 애플리케이션을 실행하는 고성능 ASGI(Asynchronous Server Gateway Interface) 서버            |
-| **PostgreSQL**  | Render.com에서 제공하는 관리형 데이터베이스 서비스                                               |
-| **psycopg2-binary** | SQLModel(SQLAlchemy)이 PostgreSQL 데이터베이스와 통신할 수 있도록 하는 Python 드라이버         |
-| **Render.com**  | FastAPI 웹 서비스 및 PostgreSQL 데이터베이스 호스팅                                              |
+- **Backend**: FastAPI (Python)
+- **Frontend**: Vanilla JavaScript, HTML, CSS
+- **Database**: Google Firestore
+- **Deployment**: Vercel
 
-## 3. 가상 환경 및 의존성 관리 (venv + uv)
+## 🚀 배포 및 설정 방법
 
-프로젝트의 의존성을 격리하고 빠르게 관리하기 위해 Python 표준 가상 환경(`venv`)과 고성능 패키지 설치 도구 `uv`를 사용합니다.
+이 프로젝트는 Vercel을 통해 간단하게 배포할 수 있습니다.
 
-1.  **uv 설치 (최초 1회):**
-    ```bash
-    pip install uv
-    ```
+### 1. Firebase 프로젝트 설정
 
-2.  **가상 환경 생성 및 활성화:**
-    ```bash
-    # 가상 환경 생성 (.venv 폴더 생성)
-    uv venv
+1.  **Firebase 프로젝트 생성**: [Firebase Console](https://console.firebase.google.com/)에서 새 프로젝트를 생성합니다.
+2.  **Firestore 활성화**: 생성한 프로젝트에서 **Firestore Database**를 생성하고 `테스트 모드` 또는 `프로덕션 모드`로 시작합니다.
+3.  **서비스 계정 키 생성**:
+    - 프로젝트 설정 > `서비스 계정` 탭으로 이동합니다.
+    - `새 비공개 키 생성` 버튼을 눌러 `.json` 형식의 키 파일을 다운로드합니다. 이 파일은 안전하게 보관해야 합니다.
 
-    # 가상 환경 활성화 (macOS/Linux)
-    source .venv/bin/activate
+### 2. Vercel 배포
 
-    # 가상 환경 활성화 (Windows)
-    .venv\Scripts\activate
-    ```
+1.  **저장소 Fork & Clone**: 이 GitHub 저장소를 자신의 계정으로 Fork한 후, 로컬 컴퓨터에 Clone합니다.
+2.  **Vercel 프로젝트 생성**: [Vercel 대시보드](https://vercel.com/dashboard)에서 `Add New...` > `Project`를 선택하고, Fork한 Git 저장소를 Import합니다.
+3.  **환경 변수 설정**:
+    - Vercel 프로젝트의 `Settings` > `Environment Variables` 메뉴로 이동합니다.
+    - 아래와 같이 환경 변수를 추가합니다.
+      - **Name**: `FIREBASE_SERVICE_ACCOUNT_KEY`
+      - **Value**: 1단계에서 다운로드한 `.json` 파일의 **내용 전체**를 복사하여 붙여넣습니다.
+4.  **배포**: `Deploy` 버튼을 클릭하여 배포를 시작합니다.
 
-3.  **의존성 관리 파일 (`requirements.txt`):**
-    Render.com 배포 호환성을 위해 `requirements.txt` 파일을 계속 사용합니다. 내용은 동일합니다.
-    ```
-    fastapi
-    sqlmodel
-    uvicorn
-    psycopg2-binary
-    ```
+### 3. Firestore 설정 (배포 후)
 
-4.  **의존성 설치:**
-    활성화된 가상 환경에서 `uv`를 사용하여 `requirements.txt` 파일의 패키지들을 설치합니다.
-    ```bash
-    uv pip install -r requirements.txt
-    ```
-
-## 4. 로컬 개발 서버 실행
-
-가상 환경이 활성화된 상태에서 아래 명령어를 실행하여 개발 서버를 시작합니다.
-
-```bash
-uvicorn main:app --reload
-```
-- `--reload` 옵션은 코드 변경 시 서버를 자동으로 재시작하여 개발 편의성을 높여줍니다.
-
-## 5. 프론트엔드 구성 계획 (정적 페이지)
-
-초기 단계에서는 별도의 프론트엔드 프로젝트를 분리하지 않고, FastAPI 백엔드에 정적 파일(HTML, CSS, JS)을 포함하여 한 번에 서빙합니다. 이를 통해 개발 환경을 단순화하고 빠른 프로토타이핑을 진행합니다. 프로젝트 규모가 커지면 향후 분리를 고려합니다.
-
-### 5.1. 파일 구조
-
-`static` 폴더를 생성하여 프론트엔드 관련 파일을 관리합니다.
-
-```
-/
-├── static/
-│   ├── index.html  # 메인 페이지
-│   ├── style.css   # 스타일시트
-│   └── app.js      # 클라이언트 사이드 로직
-├── main.py         # FastAPI 앱
-└── requirements.txt
-```
-
-### 5.2. 기능 명세
-
-- **입력**: 한 줄 메모를 입력할 수 있는 텍스트 입력창
-- **저장**: 메모를 서버에 저장하는 '추가' 버튼
-- **조회**: 서버에서 불러온 메모 목록을 보여주는 영역
-- **동작**: 페이지 로드 시 기존 메모 목록을 API로 불러오고, '추가' 버튼 클릭 시 새 메모를 API로 저장한 후 목록을 갱신합니다.
-
-### 5.3. 디자인 컨셉
-
-- **색상**: 완전한 흑백(Monotone)을 기반으로, 회색 계열(Grayscale)을 사용하여 깊이감을 조절합니다. (예: 배경-어두운 회색, 텍스트-흰색, 버튼-밝은 회색)
-- **형태**: 모든 UI 요소(버튼, 입력창 등)는 `border-radius: 0;`을 적용하여 둥근 모서리 없이 각진 형태로 디자인합니다.
-- **레이아웃**: 복잡한 요소를 배제하고, 핵심 기능(입력, 추가, 목록)을 수직으로 단순하게 배치하여 가독성을 높입니다.
-
-## 6. FastAPI 정적 파일 서빙 설정
-
-FastAPI가 `static` 폴더 안의 `index.html`과 다른 파일들을 서빙할 수 있도록 `main.py`에 `StaticFiles`를 마운트하는 설정이 필요합니다.
-
-## 7. Render.com 배포 계획
-
-### 7.1. PostgreSQL 데이터베이스 생성
-
-1.  Render 대시보드에서 **[New]** > **[PostgreSQL]**을 선택하여 새 데이터베이스를 생성합니다.
-2.  생성된 데이터베이스의 **Connect** 정보에서 **`Internal Database URL`**을 복사합니다.
-
-### 7.2. FastAPI 웹 서비스 생성
-
-1.  Render 대시보드에서 **[New]** > **[Web Service]**를 선택하고 Git 리포지토리를 연결합니다.
-2.  아래와 같이 빌드 및 실행 설정을 구성합니다.
-    -   **Build Command**: `uv pip install -r requirements.txt`
-    -   **Start Command**: `uvicorn main:app --host 0.0.0.0 --port $PORT`
-
-### 7.3. 데이터베이스 연결 설정 (환경 변수)
-
-1.  생성한 Web Service의 **[Environment]** 탭에서 새 환경 변수를 추가합니다.
-    -   **Key**: `DATABASE_URL`
-    -   **Value**: `7.1` 단계에서 복사한 **`Internal Database URL`**을 붙여넣습니다.
-
-## 8. FastAPI 애플리케이션 코드 예시 (정적 파일 포함)
-
-`main.py`는 API 로직과 더불어 정적 파일을 서빙하는 역할도 함께 수행합니다.
-
-**`main.py` (예시):**
-```python
-import os
-from fastapi import FastAPI
-from fastapi.staticfiles import StaticFiles
-from sqlmodel import create_engine
-
-# --- 데이터베이스 설정 ---
-DATABASE_URL = os.getenv("DATABASE_URL")
-engine = create_engine(DATABASE_URL, echo=True)
-
-# --- FastAPI 앱 생성 ---
-app = FastAPI()
-
-# --- API 엔드포인트 (여기에 CRUD 구현) ---
-@app.get("/api/hello")
-def read_root():
-    return {"message": "API가 정상적으로 실행 중입니다."}
-
-# --- 정적 파일 서빙 ---
-# API 라우터들이 모두 등록된 후에 마지막에 추가해야 합니다.
-app.mount("/", StaticFiles(directory="static", html=True), name="static")
-```
+- **보안 규칙**: (프로덕션 모드로 시작한 경우) Firebase Console의 `Firestore Database` > `규칙` 탭에서 아래와 같이 모든 읽기/쓰기를 허용하는 규칙으로 변경해야 앱이 정상 작동합니다.
+  ```
+  rules_version = '2';
+  service cloud.firestore {
+    match /databases/{database}/documents {
+      match /{document=**} {
+        allow read, write: if true;
+      }
+    }
+  }
+  ```
+- **인덱스 생성**: 앱 배포 후, 메모를 정렬하는 과정에서 Firestore 인덱스가 필요하다는 에러가 Vercel 로그에 나타날 수 있습니다. 이 경우, 로그에 포함된 링크를 클릭하여 필요한 인덱스를 간단하게 생성할 수 있습니다.
