@@ -68,9 +68,28 @@ header h1 {
 
 /* 메모 목록 아이템 스타일 */
 .memo-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     background-color: #333;
     padding: 12px;
     border: 1px solid #444;
     margin-bottom: 8px; /* 아이템 간의 간격 */
     border-radius: 0; /* 각진 모서리 */
+}
+
+/* 삭제 버튼 스타일 */
+.delete-btn {
+    background-color: #f44336; /* 빨간색 배경 */
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    font-size: 12px;
+    cursor: pointer;
+    border-radius: 0;
+    transition: background-color 0.2s;
+}
+
+.delete-btn:hover {
+    background-color: #d32f2f;
 }
