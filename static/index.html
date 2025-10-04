@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>한 줄 메모장</title>
+    <!-- CSS 파일을 연결합니다. -->
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1>한 줄 메모장</h1>
+        </header>
+
+        <main>
+            <!-- 메모 입력을 위한 폼 -->
+            <form id="memo-form">
+                <input type="text" id="memo-input" placeholder="메모를 입력하세요..." autocomplete="off">
+                <button type="submit">추가</button>
+            </form>
+
+            <!-- 메모 목록이 표시될 영역 -->
+            <div id="memo-list"></div>
+        </main>
+    </div>
+
+    <!-- JavaScript 파일을 연결합니다. body 태그가 닫히기 직전에 두어 HTML 렌더링을 방해하지 않도록 합니다. -->
+    <script src="/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,76 @@
+/* style.css */
+
+/* 전체 페이지에 대한 기본 스타일 설정 */
+* {
+    box-sizing: border-box; /* 모든 요소의 크기 계산을 테두리까지 포함하여 쉽게 만듭니다. */
+    margin: 0;
+    padding: 0;
+}
+
+html, body {
+    width: 100%;
+    height: 100%;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background-color: #212121; /* 어두운 회색 배경 */
+    color: #E0E0E0; /* 밝은 회색 텍스트 */
+}
+
+/* 중앙 정렬을 위한 컨테이너 */
+.container {
+    max-width: 600px;
+    margin: 40px auto; /* 위아래 여백, 좌우 자동 정렬 */
+    padding: 20px;
+}
+
+header h1 {
+    text-align: center;
+    margin-bottom: 24px;
+    font-weight: 300; /* 얇은 글씨체 */
+    letter-spacing: 1px;
+}
+
+/* 메모 입력 폼 스타일 */
+#memo-form {
+    display: flex; /* 입력창과 버튼을 가로로 나란히 배치 */
+    gap: 8px; /* 요소 사이의 간격 */
+    margin-bottom: 24px;
+}
+
+#memo-input {
+    flex-grow: 1; /* 입력창이 남은 공간을 모두 차지하도록 설정 */
+    padding: 12px;
+    font-size: 16px;
+    background-color: #333; /* 입력창 배경색 */
+    border: 1px solid #555; /* 테두리 색 */
+    color: #E0E0E0;
+    border-radius: 0; /* 각진 모서리 */
+}
+
+#memo-input:focus {
+    outline: none; /* 포커스 시 기본 아웃라인 제거 */
+    border-color: #777;
+}
+
+#memo-form button {
+    padding: 0 20px;
+    font-size: 16px;
+    background-color: #4CAF50; /* 눈에 띄는 초록색 버튼 */
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 0; /* 각진 모서리 */
+    transition: background-color 0.2s;
+}
+
+#memo-form button:hover {
+    background-color: #45a049;
+}
+
+/* 메모 목록 아이템 스타일 */
+.memo-item {
+    background-color: #333;
+    padding: 12px;
+    border: 1px solid #444;
+    margin-bottom: 8px; /* 아이템 간의 간격 */
+    border-radius: 0; /* 각진 모서리 */
+}
